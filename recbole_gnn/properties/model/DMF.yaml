@@ -1,0 +1,66 @@
+use_gpu: true
+gpu_id: 0
+worker: 0
+seed: 2026
+reproducibility: True
+
+#model config
+model: DMF
+embedding_size: 64
+
+# training config
+checkpoint_path: './ckptCopy/dmf-yelp-baseline-1.pth'
+pretrain: False
+epochs: 1000
+learning_rate: 1e-3
+stopping_step: 100
+train_batch_size: 20480
+eval_batch_size: 4096000
+loss_decimal_place: 2
+eval_step: 1
+train_neg_sample_args: 
+    distribution: uniform
+    sample_num: 1
+    # alpha: 0.1
+    dynamic: True
+    candidate_num: 2
+
+# Sampling config
+strategy: 'icpns'
+finetune: True
+finetune_epochs: 0
+stopping_step_ft: 20
+num_clusters: 8
+popularity_alpha: 0.1
+epsilon: 0.0001
+cluster_method: 'kmeans'
+finetune_lr: 1e-3
+
+# evaluation config
+metrics: ['Recall', 'MRR', 'NDCG', 'Precision']
+eval_setting: RO_RS,full
+split_ratio: [0.8, 0.1, 0.1]
+topk: [10]
+valid_metric: NDCG@10
+eval_args:
+    mode: full
+metric_decimal_place: 3
+eval_step: 1
+
+# dataset config
+field_separator: "\t"
+seq_separator: " "
+USER_ID_FIELD: user_id
+ITEM_ID_FIELD: item_id
+RATING_FIELD: rating
+NEG_PREFIX: neg_
+LABEL_FIELD: label
+load_col:
+    inter: [user_id, item_id, rating]
+val_interval:
+    rating: "[3,inf)"
+unused_col: 
+    inter: [rating]
+user_inter_num_interval: "[20,inf)"
+item_inter_num_interval: "[20,inf)"
+save_dataset: True
