@@ -9,22 +9,21 @@ model: LightGCN
 embedding_size: 64
 n_layers: 3
 reg_weight: 1e-4
-# require_pow: True
 
 # training config
-checkpoint_path: './ckptCopy/lgn-ml100k-baseline.pth'
-pretrain: False
+checkpoint_path: "" #checkpoint path for fine-tuning
+pretrain: True #set to True for pretraining
 epochs: 1000
 learning_rate: 1e-3
-stopping_step: 100
+stopping_step: 100 #you must set this value or it will be set to 10 as default in recbole
 train_batch_size: 4096
 eval_batch_size: 4096000
-train_neg_sample_args: 
-    distribution: uniform
-    sample_num: 1
-    # alpha: 0.2
-    # dynamic: True
-    # candidate_num: 10
+train_neg_sample_args:
+  distribution: uniform # or popularity for pns, uniform for hns
+  sample_num: 1
+  # alpha:              # popularity smoothing factor for pns, recommend 0.1
+  # dynamic:            # set to True for hns
+  # candidate_num:      # candidate items number for hns, recommend 10
 loss_decimal_place: 2
 
 # ICPNS config
@@ -35,20 +34,19 @@ stopping_step_ft: 200
 num_clusters: 8
 popularity_alpha: 0.8
 epsilon: 0.0001
-cluster_method: 'kmeans'
+cluster_method: "kmeans" # we currently support "kmeans", "gmm", "dbscan", "hierarchical", "spectral"
 finetune_lr: 1e-3
 
 # evaluation config
-metrics: ['Recall', 'MRR', 'NDCG', 'Precision']
+metrics: ["Recall", "MRR", "NDCG", "Precision"]
 eval_setting: RO_RS,full
 split_ratio: [0.8, 0.1, 0.1]
 topk: [10]
 valid_metric: NDCG@10
 eval_args:
-    mode: full
+  mode: full
 metric_decimal_place: 3
 eval_step: 1
-
 
 # dataset config
 field_separator: "\t"
@@ -59,9 +57,9 @@ RATING_FIELD: rating
 NEG_PREFIX: neg_
 LABEL_FIELD: label
 load_col:
-    inter: [user_id, item_id, rating]
+  inter: [user_id, item_id, rating]
 val_interval:
-    rating: "[3,inf)"
+  rating: "[3,inf)"
 
-user_inter_num_interval: "[10,inf)"
+user_inter_num_interval: "[10,inf)" # 10-core filtering
 item_inter_num_interval: "[10,inf)"
